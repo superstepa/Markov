@@ -1,5 +1,4 @@
 import random
-import sys
 
 
 class Markov(object):
@@ -35,12 +34,16 @@ class Markov(object):
             text.append(word1)
             word1, word2 = word2, random.choice(self.chain[(word1, word2)])
         text.append(word2)
-        text[0].upper()
         return ' '.join(text)
 
 if __name__ == "__main__":
-    if (len(sys.argv) < 3):
-        raise ValueError("Usage: markov.py <inputfile> <length>")
-    markov = Markov(str(sys.argv[1]))
-    with open("out.txt", "w+") as file:
-        file.write(markov.generate_text(int(sys.argv[2])))
+    import argparse
+    parser = argparse.ArgumentParser(description="\
+    Return a Markov chain generated text using a given input file.")
+    parser.add_argument('filename', type=str)
+    parser.add_argument('num', type=int, nargs='?', default=100)
+    parser.add_argument('out', type=str, nargs='?', default="out.txt")
+    args = parser.parse_args()
+    markov = Markov(args.filename)
+    with open(args.out, "w+") as file:
+        file.write(markov.generate_text(args.num))
